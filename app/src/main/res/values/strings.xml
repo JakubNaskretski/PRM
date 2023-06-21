@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ToDo App</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="task">Task:</string>
+    <string name="subTasks">Sub tasks:</string>
+    <string name="add">Add</string>
+    <string name="sort">Sort</string>
+    <string name="share">Share</string>
+    <string name="shareUsing">Share using</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delPopUpTitle">Deleting task</string>
+    <string name="delPopUpTextMessage">Are you sure you want to delete this task?</string>
+</resources>

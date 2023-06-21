@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Aplikacja ToDo</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="task">Zadanie:</string>
+    <string name="subTasks">Pod-zadania:</string>
+    <string name="add">Dodaj</string>
+    <string name="sort">Sortuj</string>
+    <string name="share">Udostępnij</string>
+    <string name="shareUsing">Udostępnij z użyciem</string>
+
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="delPopUpTitle">Usuwanie zadania</string>
+    <string name="delPopUpTextMessage">Czy jesteś pewny że chcesz usunąć to zadanie?</string>
+</resources>
