@@ -9,8 +9,17 @@
     <string name="share">Udostępnij</string>
     <string name="shareUsing">Udostępnij z użyciem</string>
 
+    <string name="register">Zarejestruj</string>
+    <string name="login">Zaloguj</string>
+    <string name="email">email</string>
+    <string name="email_example">email@email.com</string>
+    <string name="password">hasło</string>
+    <string name="have_account">Już zarejestrowany?</string>
+
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="delPopUpTitle">Usuwanie zadania</string>
     <string name="delPopUpTextMessage">Czy jesteś pewny że chcesz usunąć to zadanie?</string>
+    <string name="title_activity_login">Logowanie</string>
+    <string name="title_activity_registration">Rejestracja</string>
 </resources>
