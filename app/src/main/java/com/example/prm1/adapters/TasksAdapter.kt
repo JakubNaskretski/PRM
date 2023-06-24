@@ -15,7 +15,7 @@ class TaskViewHolder(val binding : ListItemBinding) : RecyclerView.ViewHolder(bi
     fun bind(task: Task) {
         binding.taskName.text = task.name
         binding.subTasks.text = task.subTasks.joinToString(",\n")
-        binding.image.setImageResource(task.resId)
+        binding.image.setImageResource(task.resId!!)
     }
 }
 
@@ -32,9 +32,8 @@ class TasksAdapter : RecyclerView.Adapter<TaskViewHolder>() {
             false
         )
         return TaskViewHolder(binding).also { vh ->
-            Log.d("Test", vh.toString());
             binding.root.setOnClickListener {
-                onItemClick(data[vh.layoutPosition].id)
+                onItemClick(data[vh.layoutPosition].id!!)
             }
             binding.root.setOnLongClickListener {
                 onLongClick(vh.layoutPosition)

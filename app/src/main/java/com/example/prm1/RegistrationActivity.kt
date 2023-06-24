@@ -1,23 +1,34 @@
 package com.example.prm1
 
-import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 
-class Registration : ComponentActivity() {
+class RegistrationActivity : AppCompatActivity() {
 
-    private lateinit var editTextEmail : TextInputEditText;
-    private lateinit var editTextPassword : TextInputEditText;
-    private lateinit var btnReg : Button;
-    private lateinit var auth : FirebaseAuth;
-    private lateinit var loginNavigate : TextView;
+    private lateinit var editTextEmail : TextInputEditText
+    private lateinit var editTextPassword : TextInputEditText
+    private lateinit var btnReg : Button
+    private lateinit var auth : FirebaseAuth
+    private lateinit var loginNavigate : TextView
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            var intent = Intent(applicationContext, MainActivity::class.java)
+            startActivity(intent);
+            finish();
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +40,9 @@ class Registration : ComponentActivity() {
         loginNavigate = findViewById(R.id.textAlreadyRegistered);
 
         loginNavigate.setOnClickListener {
-            // sghould be activity instead of this
-            (this as? Navigable)?.navigate(Navigable.Destination.Login)
+            var intent = Intent(applicationContext, LoginActivity::class.java)
+            startActivity(intent);
+            finish();
         }
 
         btnReg.setOnClickListener {
@@ -39,9 +51,11 @@ class Registration : ComponentActivity() {
 
             if (email.isEmpty()) {
                 Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
+                return@setOnClickListener;
             }
             if (password.isEmpty()) {
                 Toast.makeText(this, "Enter password", Toast.LENGTH_SHORT).show();
+                return@setOnClickListener;
             }
 
             auth.createUserWithEmailAndPassword(email, password)
@@ -49,18 +63,24 @@ class Registration : ComponentActivity() {
                     if (task.isSuccessful) {
                         Toast.makeText(
                             baseContext,
-                            "Registration successfull",
+                            "Registration successfully",
                             Toast.LENGTH_SHORT,
                         ).show()
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            var intent = Intent(applicationContext, LoginActivity::class.java)
+                            startActivity(intent);
+                            finish();
+                        }, 1000)
+
                     } else {
                         Toast.makeText(
                             baseContext,
-                            "Authentication failed.",
+                            "Registration failed: "+ task.exception!!.message,
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
-
         }
     }
 }

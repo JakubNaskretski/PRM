@@ -2,6 +2,7 @@ package com.example.prm1.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,21 +13,75 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.prm1.Navigable
 import com.example.prm1.R
 import com.example.prm1.adapters.SwipeToRemove
+import com.example.prm1.adapters.TaskDbObj
 import com.example.prm1.adapters.TasksAdapter
 import com.example.prm1.data.TaskDatabase
+import com.example.prm1.data.model.TaskEntity
 import com.example.prm1.databinding.FragmentListBinding
 import com.example.prm1.model.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlin.concurrent.thread
 
 class ListFragment : Fragment() {
 
+    var tasks: MutableList<Task> = mutableListOf<Task>()
+
     private lateinit var binding: FragmentListBinding
-    private var adapter : TasksAdapter? = null
-    private lateinit var db : TaskDatabase
+    private var adapter: TasksAdapter? = null
+    private lateinit var dbReference: DatabaseReference
+    private lateinit var userId: String
+    private var tasksCounter: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        db = TaskDatabase.open(requireContext())
+
+        val user = FirebaseAuth.getInstance().currentUser
+        userId = user!!.uid
+
+        dbReference =
+            FirebaseDatabase.getInstance("https://prm-project-fae69-default-rtdb.europe-west1.firebasedatabase.app/").reference.child(
+                "tasks"
+            )
+                .child(userId)
+
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                tasks = mutableListOf<Task>();
+//                tasksCounter = 0;
+                for (tasksSnapshot in dataSnapshot.children) {
+                    Log.d("myTag", tasksSnapshot.toString());
+                    var tmpTask = tasksSnapshot.getValue(TaskDbObj::class.java)
+                    if (tmpTask != null) {
+                        tasks.add(
+                            Task(
+                                dbHash = tasksSnapshot.key,
+                                id = tmpTask.id,
+                                name = tmpTask.name,
+                                subTasks = tmpTask.subTasks,
+                                resId = resources.getIdentifier(
+                                    tmpTask.resName.toString(),
+                                    "drawable",
+                                    requireContext().packageName
+                                ),
+                            )
+                        )
+                    }
+                }
+//                tasksCounter = tasks.size.toLong()
+                requireActivity().runOnUiThread {
+                    adapter?.replace(tasks)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        dbReference.addValueEventListener(postListener)
     }
 
     override fun onCreateView(
@@ -42,7 +97,7 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter = TasksAdapter().apply {
             onItemClick = {
-                (activity as? Navigable)?.navigate(Navigable.Destination.Edit, it)
+                (activity as? Navigable)?.navigate(Navigable.Destination.Display, it)
             }
             onLongClick = {
                 val builder = AlertDialog.Builder(requireContext())
@@ -52,7 +107,7 @@ class ListFragment : Fragment() {
                 builder.setPositiveButton(R.string.yes) { _, _ ->
                     adapter?.removeItem(it)?.let {
                         thread {
-                            db.tasks.remove(it.id)
+                            dbReference.child(it.dbHash!!).removeValue()
                         }
                     }
                 }
@@ -71,7 +126,7 @@ class ListFragment : Fragment() {
                 SwipeToRemove {
                     adapter?.removeItem(it)?.let {
                         thread {
-                            db.tasks.remove(it.id)
+                            dbReference.child(it.dbHash!!).removeValue()
                         }
                     }
                 }
@@ -88,15 +143,29 @@ class ListFragment : Fragment() {
     }
 
     fun loadData() = thread {
-        val tasks = db.tasks.getAll().map {
-                entity -> Task(
-            entity.id,
-            entity.name,
-            entity.subTasks.split("\n"),
-            resources.getIdentifier(entity.icon, "drawable", requireContext().packageName)
-            )
-        }
+        dbReference.get().addOnSuccessListener {
+            tasks = mutableListOf<Task>()
+            for (tasksSnapshot in it.children) {
+                var tmpTask = tasksSnapshot.getValue(TaskDbObj::class.java)
+                if (tmpTask != null) {
+                    tasks.add(
+                        Task(
+                            id = tmpTask.id,
+                            name = tmpTask.name,
+                            subTasks = tmpTask.subTasks,
+                            resId = resources.getIdentifier(
+                                tmpTask.resName.toString(),
+                                "drawable",
+                                requireContext().packageName
+                            ),
+                        )
+                    )
+                }
+            }
+//        tasksCounter = tasks.size.toLong()
+        }.addOnFailureListener {
 
+        }
         requireActivity().runOnUiThread {
             adapter?.replace(tasks)
         }
@@ -108,7 +177,6 @@ class ListFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        db.close()
         super.onDestroy()
     }
 

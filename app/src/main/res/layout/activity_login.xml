@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/registrationActivity">
+    android:id="@+id/loginActivity">
 
     <Button
-        android:id="@+id/btnRegister"
+        android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/register"
+        android:text="@string/login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
@@ -76,15 +76,15 @@
         app:srcCompat="@drawable/logo" />
 
     <TextView
-        android:id="@+id/textAlreadyRegistered"
+        android:id="@+id/textNotRegistered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/have_account"
+        android:text="@string/not_registered"
         android:textColor="#8F8F8F"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <TextView
         android:id="@+id/textTitle"
@@ -92,10 +92,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:scrollbarSize="4dp"
-        android:text="@string/register"
+        android:text="@string/login"
         android:textColor="#ff6750a4"
         android:textSize="30dp"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

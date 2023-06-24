@@ -15,6 +15,10 @@
     <string name="email_example">email@email.com</string>
     <string name="password">hasło</string>
     <string name="have_account">Już zarejestrowany?</string>
+    <string name="not_registered">Nie masz jeszcze konta?</string>
+    <string name="log_out">Wyloguj</string>
+    <string name="goBack">Wróć</string>
+    <string name="edit">Edytuj</string>
 
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
