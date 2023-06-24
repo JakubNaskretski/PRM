@@ -50,12 +50,6 @@ class MainActivity : AppCompatActivity(), Navigable {
                 Toast.LENGTH_SHORT,
             ).show()
         }
-
-//        //TODO: move if logged
-//        dbRef = FirebaseDatabase.getInstance().reference.child("Tasks")
-//        dbRef.push().setValue()
-
-
     }
 
     override fun navigate(to: Navigable.Destination, id: Long?) {

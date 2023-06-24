@@ -1,20 +1,28 @@
 package com.example.prm1.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ContentValues
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -51,10 +59,59 @@ class EditFragment : Fragment() {
     var tasks: HashMap<Long, Task> = HashMap<Long, Task>()
     var taskIdToHash: HashMap<String, String> = HashMap<String, String>()
     var tasksNumber : Long = 0;
+    private val REQUEST_CODE = 42
 
     private val CHANNEL_ID = "0"
 
+
+
+    //CAMERA
+    private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
+    private var imageUri: Uri? = null
+    private val onTakePhoto = { photography: Boolean ->
+        if (!photography) {
+            imageUri?.let {
+                requireContext().contentResolver.delete(it, null, null)
+            }
+        } else {
+            //TODO: wstawic to na background gdzies ?
+        }
+    }
+
+    //DO BUTTONA
+    private fun createPicture() {
+        val imagesUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val ct = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "tasksPhotos.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "images/jpeg")
+        }
+        imageUri = requireContext().contentResolver.insert(imagesUri, ct)
+        //button
+        cameraLauncher.launch(imageUri)
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        //CAMERA
+        cameraLauncher = registerForActivityResult(
+            ActivityResultContracts.TakePicture(),
+            onTakePhoto
+        )
+
+
+
+
+
+
+
+
+
+
         super.onCreate(savedInstanceState)
 
         val user = FirebaseAuth.getInstance().currentUser
@@ -166,8 +223,7 @@ class EditFragment : Fragment() {
                     if (id == -1L) {
 
                         database.push().setValue(taskObj)
-
-                        dispatchNotification()
+                        dispatchNotification("New Task!", "You got new task: "+ taskObj!!.name)
 
                     } else {
 //                        Update
@@ -175,14 +231,28 @@ class EditFragment : Fragment() {
                         val childUpdates = hashMapOf<String, Any>()
                         childUpdates.put(currentTask.dbHash!!, taskObj!!)
                         database.updateChildren(childUpdates)
+                        dispatchNotification("Task Updated!", "Your task: "+ taskObj!!.name+" has been updated!")
 
                     }
                     (activity as? Navigable)?.navigate(Navigable.Destination.List)
                 }
             }
+
+            binding.btnPhoto.setOnClickListener {
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+                if (takePictureIntent.resolveActivity(requireContext().packageManager) != null) {
+//                    startActivityForResult(takePictureIntent, REQUEST_CODE)
+                    registerForActivityResult(takePictureIntent, REQUEST_CODE)
+                } else {
+                    Toast.makeText(requireContext(), "Unable to open camera", Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
     }
-    private fun dispatchNotification() {
+    @SuppressLint("MissingPermission")
+    private fun dispatchNotification(title: String, description: String) {
         createNotificationChannel()
         val date = Date();
         val notificationId = SimpleDateFormat("ddHHmmss", Locale.GERMANY).format(date).toInt();
@@ -198,9 +268,9 @@ class EditFragment : Fragment() {
 
 
         val notificationBuilder = NotificationCompat.Builder(requireContext(), "$CHANNEL_ID")
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher_background)
-        notificationBuilder.setContentTitle("New Task!")
-        notificationBuilder.setContentText("You new task has been created!")
+        notificationBuilder.setSmallIcon(R.drawable.logosmall)
+        notificationBuilder.setContentTitle(title)
+        notificationBuilder.setContentText(description)
         notificationBuilder.priority = NotificationCompat.PRIORITY_DEFAULT
         notificationBuilder.setAutoCancel(true)
         notificationBuilder.setContentIntent(mainPendingIntent)
