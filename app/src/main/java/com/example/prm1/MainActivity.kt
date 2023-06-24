@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.example.prm1.fragments.ARG_EDIT_ID
 import com.example.prm1.fragments.DisplayFragment
 import com.example.prm1.fragments.EditFragment
+import com.example.prm1.fragments.IconSelectionFragment
 import com.example.prm1.fragments.ListFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -95,6 +96,17 @@ class MainActivity : AppCompatActivity(), Navigable {
                     )
                     addToBackStack(DisplayFragment::class.java.name)
                 }
+
+                Navigable.Destination.IconSelection -> {
+                    replace(
+                        R.id.container,
+                        IconSelectionFragment::class.java,
+                        Bundle().apply { putLong(ARG_EDIT_ID, id ?: -1L) },
+                        IconSelectionFragment::class.java.name
+                    )
+                    addToBackStack(IconSelectionFragment::class.java.name)
+                }
+
             }
         }.commit()
     }

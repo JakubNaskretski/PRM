@@ -19,6 +19,9 @@
     <string name="log_out">Wyloguj</string>
     <string name="goBack">Wróć</string>
     <string name="edit">Edytuj</string>
+    <string name="icon">Ikona:</string>
+    <string name="select">Kliknij aby wybrac</string>
+    <string name="take_photo">Zdjęcie</string>
 
     <string name="yes">Tak</string>
     <string name="no">Nie</string>

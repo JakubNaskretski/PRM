@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:tooltipText="@string/select"
-    tools:context=".fragments.DisplayFragment">
+    tools:context=".fragments.EditFragment2">
 
     <EditText
         android:id="@+id/taskName"
@@ -13,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:editable="false"
         android:ems="10"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +24,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:editable="false"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="text|textMultiLine"
@@ -35,16 +32,15 @@
         app:layout_constraintStart_toStartOf="@+id/taskName"
         app:layout_constraintTop_toBottomOf="@+id/taskName" />
 
-    <ImageView
-        android:id="@+id/imageTask"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/images"
+        android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
-        android:tooltipText="@string/select"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subTasks"
-        tools:src="@tools:sample/avatars" />
+        tools:listitem="@layout/task_image" />
 
     <TextView
         android:id="@+id/taskNameTitle"
@@ -65,44 +61,54 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/subTasks"
         app:layout_constraintStart_toStartOf="@+id/taskNameTitle" />
 
-    <Button
-        android:id="@+id/btnEdit"
+    <TextView
+        android:id="@+id/subTasksTitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/edit"
-        app:layout_constraintBottom_toBottomOf="@+id/btnReturn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnShare"
-        app:layout_constraintTop_toTopOf="@+id/btnReturn" />
+        android:text="@string/subTasks"
+        app:layout_constraintBaseline_toBaselineOf="@+id/subTasks"
+        app:layout_constraintStart_toStartOf="@+id/taskNameTitle" />
 
     <Button
-        android:id="@+id/btnReturn"
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnShare"
+        app:layout_constraintTop_toTopOf="@+id/btnCancel" />
+
+    <Button
+        android:id="@+id/btnPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="zdjecie"
+        app:layout_constraintEnd_toEndOf="@+id/btnShare"
+        app:layout_constraintStart_toStartOf="@+id/btnShare"
+        app:layout_constraintTop_toBottomOf="@+id/btnShare" />
+
+    <Button
+        android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/goBack"
+        android:text="@string/cancel"
         app:layout_constraintEnd_toStartOf="@+id/btnShare"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageTask" />
+        app:layout_constraintTop_toBottomOf="@+id/images" />
 
     <Button
         android:id="@+id/btnShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/share"
-        app:layout_constraintBottom_toBottomOf="@+id/btnReturn"
-        app:layout_constraintEnd_toStartOf="@+id/btnEdit"
+        app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
+        app:layout_constraintEnd_toStartOf="@+id/btnSave"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/btnReturn"
-        app:layout_constraintTop_toTopOf="@+id/btnReturn" />
+        app:layout_constraintStart_toEndOf="@+id/btnCancel"
+        app:layout_constraintTop_toTopOf="@+id/btnCancel" />
 
-    <TextView
-        android:id="@+id/textIconTittle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/icon"
-        app:layout_constraintStart_toStartOf="@+id/subTasksTitle"
-        app:layout_constraintTop_toTopOf="@+id/imageTask" />
 </androidx.constraintlayout.widget.ConstraintLayout>

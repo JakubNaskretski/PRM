@@ -98,10 +98,10 @@ class EditFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //CAMERA
-        cameraLauncher = registerForActivityResult(
-            ActivityResultContracts.TakePicture(),
-            onTakePhoto
-        )
+//        cameraLauncher = registerForActivityResult(
+//            ActivityResultContracts.TakePicture(),
+//            onTakePhoto
+//        )
 
 
 
@@ -193,10 +193,10 @@ class EditFragment : Fragment() {
 
             }
 
-            binding.images.apply {
-                adapter = this@EditFragment.adapter
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            }
+//            binding.images.apply {
+//                adapter = this@EditFragment.adapter
+//                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+//            }
 
             binding.btnCancel.setOnClickListener {
                 parentFragmentManager.popBackStack()
@@ -238,15 +238,8 @@ class EditFragment : Fragment() {
                 }
             }
 
-            binding.btnPhoto.setOnClickListener {
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-                if (takePictureIntent.resolveActivity(requireContext().packageManager) != null) {
-//                    startActivityForResult(takePictureIntent, REQUEST_CODE)
-                    registerForActivityResult(takePictureIntent, REQUEST_CODE)
-                } else {
-                    Toast.makeText(requireContext(), "Unable to open camera", Toast.LENGTH_SHORT).show()
-                }
+            binding.imageView.setOnClickListener {
+                (activity as? Navigable)?.navigate(Navigable.Destination.IconSelection)
             }
 
         }

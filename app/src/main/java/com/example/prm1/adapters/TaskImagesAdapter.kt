@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.prm1.R
 import com.example.prm1.databinding.ListItemBinding
 import com.example.prm1.databinding.TaskImageBinding
+import com.example.prm1.fragments.IconSelectionFragment
 
 class TaskImageViewHolder(val binding : TaskImageBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -16,12 +17,18 @@ class TaskImageViewHolder(val binding : TaskImageBinding) : RecyclerView.ViewHol
     }
 }
 
-class TaskImagesAdapter : RecyclerView.Adapter<TaskImageViewHolder>() {
+class TaskImagesAdapter() : RecyclerView.Adapter<TaskImageViewHolder>() {
+
+    private lateinit var iconSelection : IconSelectionFragment
+
     private val images = listOf(R.drawable.bell, R.drawable.phone, R.drawable.message)
     private var selectedPosition: Int = 0
     val selectedIdRes: Int
         get() = images[selectedPosition]
 
+    fun newInstance(iconSelectionFragment: View?) {
+        iconSelection = iconSelectionFragment;
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskImageViewHolder {
         val binding = TaskImageBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -31,6 +38,7 @@ class TaskImagesAdapter : RecyclerView.Adapter<TaskImageViewHolder>() {
         return TaskImageViewHolder(binding).also {vh ->
             binding.root.setOnClickListener() {
                 setSelected(vh.layoutPosition)
+                iconSelection.iconSelected(vh.layoutPosition);
             }
         }
     }
