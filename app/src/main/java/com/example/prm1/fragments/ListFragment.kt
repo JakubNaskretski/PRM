@@ -108,12 +108,7 @@ class ListFragment : Fragment() {
                 builder.setPositiveButton(R.string.yes) { _, _ ->
                     adapter?.removeItem(it)?.let {
                         thread {
-                            var storageRef = storage.reference.child(userId+"/"+ it!!.id+"/")
-                            storageRef.delete()
-
-                            Log.d("myTag", it.toString());
-
-                            dbReference.child(it.dbHash!!).removeValue()
+                            deleteFromDB(it)
                         }
                     }
                 }
@@ -132,13 +127,7 @@ class ListFragment : Fragment() {
                 SwipeToRemove {
                     adapter?.removeItem(it)?.let {
                         thread {
-
-                            Log.d("myTag", it.toString());
-
-                            var storageRef = storage.reference.child(userId+"/"+ it!!.id+"/")
-                            storageRef.delete()
-
-                            dbReference.child(it.dbHash!!).removeValue()
+                            deleteFromDB(it)
                         }
                     }
                 }
@@ -152,6 +141,12 @@ class ListFragment : Fragment() {
         binding.btSort.setOnClickListener {
             adapter?.sort()
         }
+    }
+
+    private fun deleteFromDB(task: Task) {
+        var storageRef = storage.reference.child(userId+"/"+ task!!.id+"/")
+        storageRef.delete()
+        dbReference.child(task.dbHash!!).removeValue()
     }
 
     fun loadData() = thread {

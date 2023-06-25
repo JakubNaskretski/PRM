@@ -34,6 +34,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
@@ -211,21 +213,12 @@ class EditFragment : Fragment() {
                             .child(userId)
 
                     var storageRef = storage.reference.child(userId+"/"+ taskObj!!.id+"/")
+                    val baos = ByteArrayOutputStream()
                     // create new
                     if (id == -1L) {
                         //TODO" check how to move it above
                         if (this::photo.isInitialized) {
-
-                        val baos = ByteArrayOutputStream()
-                        photo.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                        val data = baos.toByteArray()
-                            var uploadTask = storageRef.putBytes(data)
-                            uploadTask.addOnFailureListener {
-                                Log.d("myTag", it.message.toString());
-                            }.addOnSuccessListener { taskSnapshot ->
-                                Log.d("myTag", taskSnapshot.toString());
-                            }
-
+                            pushFile(baos, storageRef);
                         }
                         database.push().setValue(taskObj)
                         dispatchNotification("New Task!", "You got new task: "+ taskObj!!.name)
@@ -236,15 +229,7 @@ class EditFragment : Fragment() {
                         storageRef.delete().addOnSuccessListener {
 
                             if (this::photo.isInitialized) {
-                                val baos = ByteArrayOutputStream()
-                                photo.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                                val data = baos.toByteArray()
-                                var uploadTask = storageRef.putBytes(data)
-                                uploadTask.addOnFailureListener {
-                                    Log.d("myTag", it.message.toString());
-                                }.addOnSuccessListener { taskSnapshot ->
-                                    Log.d("myTag", taskSnapshot.toString());
-                                }
+                                pushFile(baos, storageRef);
                             }
 
                         }.addOnFailureListener {
@@ -265,9 +250,20 @@ class EditFragment : Fragment() {
             binding.btnPhoto.setOnClickListener {
                 createPicture()
             }
-
         }
     }
+
+    private fun pushFile(baos: ByteArrayOutputStream,storageRef: StorageReference) {
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+        var uploadTask = storageRef.putBytes(data)
+        uploadTask.addOnFailureListener {
+            Log.d("myTag", it.message.toString());
+        }.addOnSuccessListener { taskSnapshot ->
+            Log.d("myTag", taskSnapshot.toString());
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private fun dispatchNotification(title: String, description: String) {
         createNotificationChannel()
