@@ -25,6 +25,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlin.concurrent.thread
 
 class ListFragment : Fragment() {
@@ -35,7 +37,7 @@ class ListFragment : Fragment() {
     private var adapter: TasksAdapter? = null
     private lateinit var dbReference: DatabaseReference
     private lateinit var userId: String
-    private var tasksCounter: Long = 0
+    private var storage = Firebase.storage("gs://prm-project-fae69.appspot.com")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +56,6 @@ class ListFragment : Fragment() {
                 tasks = mutableListOf<Task>();
 //                tasksCounter = 0;
                 for (tasksSnapshot in dataSnapshot.children) {
-                    Log.d("myTag", tasksSnapshot.toString());
                     var tmpTask = tasksSnapshot.getValue(TaskDbObj::class.java)
                     if (tmpTask != null) {
                         tasks.add(
@@ -107,6 +108,11 @@ class ListFragment : Fragment() {
                 builder.setPositiveButton(R.string.yes) { _, _ ->
                     adapter?.removeItem(it)?.let {
                         thread {
+                            var storageRef = storage.reference.child(userId+"/"+ it!!.id+"/")
+                            storageRef.delete()
+
+                            Log.d("myTag", it.toString());
+
                             dbReference.child(it.dbHash!!).removeValue()
                         }
                     }
@@ -126,6 +132,12 @@ class ListFragment : Fragment() {
                 SwipeToRemove {
                     adapter?.removeItem(it)?.let {
                         thread {
+
+                            Log.d("myTag", it.toString());
+
+                            var storageRef = storage.reference.child(userId+"/"+ it!!.id+"/")
+                            storageRef.delete()
+
                             dbReference.child(it.dbHash!!).removeValue()
                         }
                     }
@@ -150,6 +162,7 @@ class ListFragment : Fragment() {
                 if (tmpTask != null) {
                     tasks.add(
                         Task(
+                            dbHash = tasksSnapshot.key,
                             id = tmpTask.id,
                             name = tmpTask.name,
                             subTasks = tmpTask.subTasks,

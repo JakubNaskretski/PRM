@@ -1,6 +1,8 @@
 package com.example.prm1.fragments
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +18,8 @@ import com.example.prm1.model.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlin.concurrent.thread
 
 /**
@@ -30,6 +34,9 @@ class DisplayFragment : Fragment() {
     private lateinit var userId: String
     private lateinit var database: DatabaseReference
     private lateinit var currentTask: Task
+    private val ONE_MEGABYTE: Long = 1024 * 1024
+    private lateinit var photo: Bitmap
+    private var storage = Firebase.storage("gs://prm-project-fae69.appspot.com")
     var tasks: HashMap<Long, Task> = HashMap<Long, Task>()
     var tasksNumber : Long = 0;
 
@@ -94,6 +101,14 @@ class DisplayFragment : Fragment() {
                 currentTask = tasks[id - 1]!!
 
                 thread {
+
+                    var storageRef = storage.reference.child(userId+"/"+ currentTask!!.id+"/")
+
+                    storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                        photo = BitmapFactory.decodeByteArray(it, 0, it.size)
+                        binding.photo.setImageBitmap(photo)
+                    }
+
                     requireActivity().runOnUiThread {
                         binding.taskName.setText(currentTask?.name ?: "")
                         binding.taskName.isEnabled = false;
@@ -120,23 +135,6 @@ class DisplayFragment : Fragment() {
                     startActivity(Intent.createChooser(intent, R.string.shareUsing.toString()))
                 }
 
-            }
-
-            binding.btnShare.setOnClickListener {
-                var intent = Intent(Intent.ACTION_SEND)
-                intent.type = "text/plain"
-
-                val sb = StringBuilder()
-                sb.append(getText(R.string.task))
-                    .append(" ")
-                    .append(currentTask?.name)
-                    .append("\n")
-                    .append(getText(R.string.subTasks))
-                    .append(" ")
-                    .append(currentTask?.subTasks)
-                val body = sb.toString()
-                intent.putExtra(Intent.EXTRA_TEXT, body)
-                startActivity(Intent.createChooser(intent, R.string.shareUsing.toString()))
             }
 
             binding.btnEdit.setOnClickListener {

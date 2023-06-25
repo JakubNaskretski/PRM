@@ -62,6 +62,7 @@ dependencies {
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')

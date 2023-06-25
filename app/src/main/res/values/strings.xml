@@ -21,6 +21,7 @@
     <string name="edit">Edit</string>
     <string name="icon">Icon:</string>
     <string name="select">Click to select</string>
+    <string name="photo">Additional photo:</string>
     <string name="take_photo">Photo</string>
 
     <string name="yes">Yes</string>
